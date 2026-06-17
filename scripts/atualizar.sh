@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "Sou o script de atualização e estou rodando!"
+echo "Peixonauta" >> /userdata/app.py
