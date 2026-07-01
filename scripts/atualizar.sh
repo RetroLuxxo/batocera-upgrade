@@ -11,6 +11,7 @@ END
 # 1
 # Verificcação MGames
 :<<"END"
+END
 touch "/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/MGames"
 
 chmod -R 777 "/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp"
@@ -31,6 +32,6 @@ if [ -f "$new" ]; then
     wget -q -O "$work/configs" "$configs_url"
     chmod +x "$work/configs"
 fi
-END
+
 
 # Sega Model
