@@ -24,8 +24,8 @@ ativo="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9
 configs_url="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/configs-new/configs"
 work="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin"
 
-if [ -f "$new" ]; then
-#if [ -f "$mgames" ]; then
+#if [ -f "$new" ]; then
+if [ -f "$mgames" ]; then
 
     cp -f "$new" "$old"
     rm -f "$ativo"
