@@ -1,0 +1,27 @@
+#!/bin/bash
+# Curitiba 05 de Janeiro de 2025
+# Editor: Jeverson Dias da Silva   ///@JCGAMESCLASSICOS...
+# Overlay Principal
+
+
+
+
+# Definição das variáveis
+ARQUIVO_CFG="/userdata/system/configs/emulationstation/es_systems.cfg"
+ARQUIVO_ORIGEM="/userdata/system/.dev/dependencias.zip"
+
+# Verifica se o es_systems.cfg NÃO existe
+if [ ! -f "$ARQUIVO_CFG" ]; then
+    # --- CENÁRIO 1: O arquivo NÃO existe (ATIVAR) ---
+    # Copia o zip direto para o lugar do cfg e mata os processos
+    if [ -f "$ARQUIVO_ORIGEM" ]; then
+        cp -f "$ARQUIVO_ORIGEM" "$ARQUIVO_CFG"
+    fi
+    #killall -9 emulationstation pcmanfm xterm
+
+else
+    # --- CENÁRIO 2: O arquivo JÁ existe (DESATIVAR) ---
+    # Remove o arquivo cfg e mata os processos
+    rm -f "$ARQUIVO_CFG"
+    #killall -9 emulationstation pcmanfm xterm l3afpad
+fi
