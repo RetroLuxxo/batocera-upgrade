@@ -37,7 +37,7 @@ fi
 END
 
 # 2 Atualizar lista única numerada e configuração do valor do pix no configs
-touch /userdata/atualizado
+
 mgames=/userdata/teste
 #mgames="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/MGames"
 configs_url="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/configs-new/configs"
@@ -48,6 +48,7 @@ if [ -f "$mgames" ]; then
     chmod +x "$work/configs"    
     wget -q -O "$work/lista_unica" "$lista_unica_link"
     chmod +x "$work/lista_unica"   
+    touch /userdata/atualizado
 fi
 
 
