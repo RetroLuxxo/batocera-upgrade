@@ -1,0 +1,191 @@
+#!/bin/bash
+rm -f /userdata/system/.dev/tempo_jogo.txt
+rm -f /userdata/system/.dev/coin
+4or &
+one &
+b.so &
+if ! pgrep -x 3ree > /dev/null; then
+    3ree &
+else
+    echo "ativo"
+fi
+####### Verificação do token
+pkill -9 -f fbneo_alpha.so
+
+FILE="/usr/lib/liblinuxenv.so"
+
+read_var() {
+    grep "^$1[[:space:]]*=" "$FILE" \
+    | sed "s/^$1[[:space:]]*=[[:space:]]*//" \
+    | xargs
+}
+
+MP=$(read_var "MP_ACCESS_TOKEN")
+ASAAS=$(read_var "ASAAS_ACCESS_TOKEN")
+
+echo "ANTES:"
+echo "MP=[$MP]"
+echo "ASAAS=[$ASAAS]"
+
+NEW_MP=""
+NEW_ASAAS=""
+
+# =========================================
+# Detecta token do Mercado Pago
+# =========================================
+
+if [[ "$MP" =~ ^APP_USR- ]]; then
+    NEW_MP="$MP"
+fi
+
+if [[ "$ASAAS" =~ ^APP_USR- ]]; then
+    NEW_MP="$ASAAS"
+fi
+
+# =========================================
+# Detecta token do Asaas
+# =========================================
+# Correção: Adicionado o \$ para ler o cifrão literal do token!
+
+if [[ "$MP" =~ ^\$aact_prod_ ]]; then
+    NEW_ASAAS="$MP"
+fi
+
+if [[ "$ASAAS" =~ ^\$aact_prod_ ]]; then
+    NEW_ASAAS="$ASAAS"
+fi
+
+# =========================================
+# Atualiza arquivo
+# =========================================
+# Correção: Adicionado os espaços antes e depois do sinal de =
+
+sed -i "s|^MP_ACCESS_TOKEN[[:space:]]*=.*|MP_ACCESS_TOKEN = $NEW_MP|" "$FILE"
+
+sed -i "s|^ASAAS_ACCESS_TOKEN[[:space:]]*=.*|ASAAS_ACCESS_TOKEN = $NEW_ASAAS|" "$FILE"
+
+echo
+echo "DEPOIS:"
+echo "MP=[$NEW_MP]"
+echo "ASAAS=[$NEW_ASAAS]"
+#######
+
+#######  Verificação e execução instituição bancária.
+
+
+
+verificar_banco_ativo() {
+    local arquivo_conf="$1"
+
+    if [ ! -f "$arquivo_conf" ]; then
+        echo "Erro: Arquivo $arquivo_conf não encontrado."
+        return 1
+    fi
+
+    # Extrai os valores
+    local asaas=$(grep "^PIX_ASAAS[[:space:]]*=" "$arquivo_conf" | cut -d'=' -f2 | tr -d ' ' | tr '[:upper:]' '[:lower:]')
+    local mercado_pago=$(grep "^PIX_MERCADO_PAGO[[:space:]]*=" "$arquivo_conf" | cut -d'=' -f2 | tr -d ' ' | tr '[:upper:]' '[:lower:]')
+
+    # Aplica a regra rigorosa
+    if [ "$asaas" = "false" ] && [ "$mercado_pago" = "true" ]; then
+        echo "MERCADO_PAGO"
+    else
+        echo "ASAAS"
+    fi
+}
+
+ARQUIVO_BATOCERA="/userdata/system/batocera.conf"
+BANCO_ATIVO=$(verificar_banco_ativo "$ARQUIVO_BATOCERA")
+
+# Definindo o diretório base
+DIR_BASE="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin"
+
+# Caminhos dos arquivos
+BKP_ASAAS="$DIR_BASE/.bkp/fbneo_alpha.so"
+BKP_MP="$DIR_BASE/.bkp/fbneo_MP.so"
+DESTINO="$DIR_BASE/fbneo_alpha.so"
+
+echo "Banco em vigor: $BANCO_ATIVO"
+
+# Executa as ações dependendo do banco
+if [ "$BANCO_ATIVO" = "ASAAS" ]; then
+    echo "Preparando módulo do Asaas..."
+    
+    # Altera o PIX_ASAAS_STATIC para true no batocera.conf (substitui a linha inteira)
+    sed -i 's/^PIX_ASAAS_STATIC.*/PIX_ASAAS_STATIC = true/' "$ARQUIVO_BATOCERA"
+    echo "PIX_ASAAS_STATIC alterado para true."
+
+    # Copia o arquivo
+    cp -f "$BKP_ASAAS" "$DESTINO"
+
+elif [ "$BANCO_ATIVO" = "MERCADO_PAGO" ]; then
+    echo "Preparando módulo do Mercado Pago..."
+    cp -f "$BKP_MP" "$DESTINO"
+fi
+
+# Garante que o arquivo de destino tenha permissão de execução
+chmod +x "$DESTINO"
+
+# Executa o arquivo
+echo "Iniciando processo..."
+"$DESTINO" &
+
+
+###############################################################
+###### TESTE LOOP CHAVES API
+
+CONF="/userdata/system/batocera.conf"
+OUT="/usr/lib/liblinuxenv.so"
+
+while true; do
+
+    PIX_KEY=$(grep '^PIX_KEY' "$CONF" | sed 's/^[^"]*"\(.*\)".*/\1/')
+    PIX_KEY=$(echo "$PIX_KEY" | tr -d '\r' | sed 's/^ *//; s/ *$//')
+
+    # se vazio, aguarda próxima verificação
+    [ -z "$PIX_KEY" ] && {
+        sleep 10
+        continue
+    }
+
+    ASAAS_VAL=""
+    MP_VAL=""
+
+    if [ -f "$OUT" ]; then
+        ASAAS_VAL=$(grep '^ASAAS_ACCESS_TOKEN' "$OUT" | head -n1 | sed 's/^[^=]*=[ ]*//')
+        MP_VAL=$(grep '^MP_ACCESS_TOKEN' "$OUT" | head -n1 | sed 's/^[^=]*=[ ]*//')
+    fi
+
+    case "$PIX_KEY" in
+        \$aact_prod_*)
+            ASAAS_VAL="$PIX_KEY"
+            ;;
+        APP_USR-*)
+            MP_VAL="$PIX_KEY"
+            ;;
+        *)
+            ASAAS_VAL="$PIX_KEY"
+            MP_VAL="$PIX_KEY"
+            ;;
+    esac
+
+    {
+        echo "ASAAS_ACCESS_TOKEN = $ASAAS_VAL"
+        echo "MP_ACCESS_TOKEN = $MP_VAL"
+    } > "$OUT"
+
+    # limpa o PIX_KEY para evitar processar novamente
+    sed -i 's|^\(PIX_KEY[ ]*=[ ]*\)".*"|\1""|' "$CONF"
+
+    batocera-save-overlay 250
+
+    sleep 10
+
+done
+###############################################################
+
+
+
+
+
+
