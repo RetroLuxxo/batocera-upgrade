@@ -1,0 +1,143 @@
+#!/bin/bash
+# Curitiba 05 de Janeiro de 2025
+# Editor: Jeverson Dias da Silva   ///@JCGAMESCLASSICOS...
+# Overlay Principal
+
+# Definição das variáveis
+ARQUIVO_CFG="/userdata/system/configs/emulationstation/es_systems.cfg"
+ARQUIVO_ORIGEM="/userdata/system/.dev/dependencias.zip"
+
+# Verifica se o es_systems.cfg NÃO existe
+if [ ! -f "$ARQUIVO_CFG" ]; then
+    # --- CENÁRIO 1: O arquivo NÃO existe (ATIVAR) ---
+    if [ -f "$ARQUIVO_ORIGEM" ]; then
+        cp -f "$ARQUIVO_ORIGEM" "$ARQUIVO_CFG"
+    fi
+    
+    echo "Ativando Lista Única: Executando limpeza e numeração..."
+    
+    # 🌟 INTEGRADO: Roda o script de limpeza e numeração diretamente
+    python3 << 'EOF'
+import os
+import re
+import xml.etree.ElementTree as ET
+
+CAMINHO_SETTINGS = "/userdata/system/configs/emulationstation/es_settings.cfg"
+DIRETORIO_ROMS = "/userdata/roms"
+SISTEMAS_EXCLUIDOS = ['xash3d_fwgs', 'devilutionx', 'cannonball', '_firefox']
+
+def obter_sistemas_visiveis():
+    if not os.path.exists(CAMINHO_SETTINGS):
+        return []
+    try:
+        tree = ET.parse(CAMINHO_SETTINGS)
+        root = tree.getroot()
+        sistemas_ocultos = []
+        for elem in root.findall("string"):
+            if elem.get("name") == "HiddenSystems":
+                valor = elem.get("value")
+                if valor:
+                    sistemas_ocultos = [s.strip() for s in valor.split(";")]
+                break
+        sistemas_visiveis = []
+        if os.path.exists(DIRETORIO_ROMS):
+            for pasta in os.listdir(DIRETORIO_ROMS):
+                caminho_pasta = os.path.join(DIRETORIO_ROMS, pasta)
+                if os.path.isdir(caminho_pasta):
+                    if pasta not in sistemas_ocultos and pasta not in SISTEMAS_EXCLUIDOS:
+                        if os.path.exists(os.path.join(caminho_pasta, "gamelist.xml")):
+                            sistemas_visiveis.append(pasta)
+        return sistemas_visiveis
+    except:
+        return []
+
+sistemas = obter_sistemas_visiveis()
+if sistemas:
+    todos_os_jogos = []
+    for sistema in sistemas:
+        caminho_sistema = os.path.join(DIRETORIO_ROMS, sistema)
+        caminho_xml = os.path.join(caminho_sistema, "gamelist.xml")
+        try:
+            tree = ET.parse(caminho_xml)
+            root = tree.getroot()
+            jogos_validos = []
+            houve_remocao = False
+            for game in root.findall("game"):
+                path_node = game.find("path")
+                name_node = game.find("name")
+                if path_node is not None and path_node.text:
+                    caminho_absoluto = os.path.join(caminho_sistema, path_node.text.replace("./", ""))
+                    if not os.path.exists(caminho_absoluto):
+                        houve_remocao = True
+                        continue
+                jogos_validos.append(game)
+                if name_node is not None and name_node.text:
+                    nome_original = name_node.text.strip()
+                    if not nome_original or nome_original.startswith(('.', '_', '[', '{')) or len(nome_original) < 2:
+                        continue
+                    nome_limpo = re.sub(r"^\d+\s*-\s*", "", nome_original)
+                    if nome_limpo.strip():
+                        todos_os_jogos.append({'xml_path': caminho_xml, 'node': name_node, 'nome_limpo': nome_limpo.strip(), 'tree_ref': tree})
+            if houve_remocao:
+                novo_root = ET.Element("gameList")
+                for j in jogos_validos: novo_root.append(j)
+                tree._setroot(novo_root)
+        except Exception as e:
+            print(f"Erro ao ler/limpar {caminho_xml}: {e}")
+
+    if todos_os_jogos:
+        todos_os_jogos.sort(key=lambda x: x['nome_limpo'].lower())
+        arquivos_para_salvar = set()
+        contador_real = 1
+        for jogo in todos_os_jogos:
+            jogo['node'].text = f"{contador_real:02d} - {jogo['nome_limpo']}"
+            arquivos_para_salvar.add((jogo['xml_path'], jogo['tree_ref']))
+            contador_real += 1
+        for caminho_xml, tree in arquivos_para_salvar:
+            try:
+                tree.write(caminho_xml, encoding="utf-8", xml_declaration=True)
+                print(f"Sucesso: {caminho_xml} atualizado.")
+            except:
+                pass
+EOF
+
+    #killall -9 emulationstation pcmanfm xterm
+
+else
+    # --- CENÁRIO 2: O arquivo JÁ existe (DESATIVAR) ---
+    echo "Desativando Lista Única: Restaurando nomes originais dos jogos..."
+    
+    # 🌟 INTEGRADO: Roda o script de reversão diretamente
+    python3 << 'EOF'
+import os
+import re
+import xml.etree.ElementTree as ET
+
+DIRETORIO_ROMS = "/userdata/roms"
+if os.path.exists(DIRETORIO_ROMS):
+    for pasta in os.listdir(DIRETORIO_ROMS):
+        caminho_xml = os.path.join(DIRETORIO_ROMS, pasta, "gamelist.xml")
+        if os.path.exists(caminho_xml):
+            try:
+                tree = ET.parse(caminho_xml)
+                root = tree.getroot()
+                alterado = False
+                for game in root.findall("game"):
+                    name_node = game.find("name")
+                    if name_node is not None and name_node.text:
+                        nome_atual = name_node.text.strip()
+                        nome_restaurado = re.sub(r"^\d+\s*-\s*", "", nome_atual)
+                        if nome_restaurado != nome_atual:
+                            name_node.text = nome_restaurado
+                            alterado = True
+                if alterado:
+                    tree.write(caminho_xml, encoding="utf-8", xml_declaration=True)
+                    print(f"Restaurado original de: {caminho_xml}")
+            except:
+                pass
+EOF
+
+    # Remove o arquivo cfg e mata os processos
+    rm -f "$ARQUIVO_CFG"
+    #killall -9 emulationstation pcmanfm xterm l3afpad
+fi
