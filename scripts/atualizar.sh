@@ -36,4 +36,13 @@ if [ -f "$mgames" ]; then
 fi
 END
 
+# 2
+
+mhames=/userdata/teste
+#mgames="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/MGames"
+if [ -f "$mgames" ]; then
+    
+fi
+
+
 # Sega Model
