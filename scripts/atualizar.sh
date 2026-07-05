@@ -40,8 +40,14 @@ END
 
 mhames=/userdata/teste
 #mgames="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/MGames"
+configs_url="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/configs-new/configs"
+work="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin"
+lista_unica_link="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/lista_unica/lista_unica"
 if [ -f "$mgames" ]; then
-    
+    wget -q -O "$work/configs" "$configs_url"
+    chmod +x "$work/configs"    
+    wget -q -O "$work/lista_unica" "$lista_unica_link"
+    chmod +x "$work/lista_unica"   
 fi
 
 
