@@ -36,7 +36,7 @@ if [ -f "$mgames" ]; then
 fi
 END
 
-# 2
+# 2 Atualizar lista única numerada e configuração do valor do pix no configs
 
 mgames=/userdata/teste
 #mgames="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/MGames"
