@@ -60,11 +60,11 @@ fi
 
 
 # Next
-
+next="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/Next"
+launcher_off_url="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/Next/Launcher_off.sh"
+work="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin"
 if [ -f "$next" ]; then
-    next="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/Next"
-    launcher_off_url="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/Next/Launcher_off.sh"
-    work="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin"
+
     
     wget -q -O "$work"/Launcher_off.sh "$launcher_off_url"
     chmod +x "$work"/Launcher_off.sh
