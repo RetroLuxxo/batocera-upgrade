@@ -8,6 +8,13 @@ if [ -f /userdata/app.py ]; then
 fi
 END
 
+
+#MGames
+#MGames
+#MGames
+#MGames
+#MGames
+#MGames
 # 1
 # Verificcação MGames
 :<<"END"
@@ -60,6 +67,11 @@ fi
 
 
 # Next
+# Next
+# Next
+# Next
+# Next
+# Next
 next="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/Next"
 launcher_off_url="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/Next/Launcher_off.sh"
 work="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin"
@@ -74,6 +86,11 @@ fi
 
 
 
+# Wecad
+# Wecad
+# Wecad
+# Wecad
+# Wecad
 # Wecad
 next="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/Wecad"
 
