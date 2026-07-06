@@ -1,0 +1,22 @@
+#!/bin/bash
+# Curitiba 05 de Janeiro de 2025
+# Editor: Jeverson Dias da Silva   ///@JCGAMESCLASSICOS...
+# Overlay Principal
+
+
+
+# Script para limpar inputs desnecessários dos joysticks no es_input.cfg
+# Mantém apenas up, down, left, right e a
+# NÃO altera o bloco do teclado
+
+ARQ="/userdata/system/configs/emulationstation/es_input.cfg"
+
+# Remove linhas indesejadas apenas dentro dos blocos joystick
+awk '
+/<inputConfig type="joystick"/ { injoy=1 }
+injoy && /<\/inputConfig>/ { injoy=0 }
+injoy && $0 ~ /name="(start|select|a|x|y|l2|r2|hotkey)"/ { next } #|pagedown|pageup|left|right|joystick2left|joystick1left
+{ print }
+' "$ARQ" > "$ARQ.tmp" && mv "$ARQ.tmp" "$ARQ"
+
+echo "Limpeza concluída em $ARQ"
