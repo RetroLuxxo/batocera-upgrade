@@ -95,7 +95,30 @@ fi
 # Wecad
 # Wecad
 # Wecad
-next="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/Wecad"
+
+
+:<< "END"
+END
+mgames="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/MGames"
+next="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/Next"
+wecad="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin/.bkp/Wecad"
+
+if [ ! -f "$mgames" ] || [ ! -f "$next" ]; then
+    touch "$wecad"
+fi
+
+BIN_DIR="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin"
+CONFIGGEN_DIR="/usr/lib/python3.11/site-packages/configgen"
+
+Launcher_off="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/Wecad/ports/Launcher_off.sh"
+Launcher_on="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/Wecad/ports/Launcher_on.sh"
+Emulatorlauncher="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/Wecad/ports/emulatorlauncher.py"
+
+wget -q "$Launcher_off" -O "$BIN_DIR/Launcher_off.sh"
+wget -q "$Launcher_on" -O "$BIN_DIR/Launcher_on.sh"
+wget -q "$Emulatorlauncher" -O "$CONFIGGEN_DIR/emulatorlauncher.py"
+
+batocera-save-overlay 250 &
 
 
 
