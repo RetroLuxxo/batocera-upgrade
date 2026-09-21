@@ -108,14 +108,16 @@ if [ -f "$mgames" ] || [ -f "$next" ]; then
 fi
 
 touch "$wecad"
-
+SISTEM_DIR="/userdata/system"
 BIN_DIR="/userdata/bios/Machines/SVI - Spectravideo SVI-328 MK2/.1/2/3/4/5/6/7/8/9/10/bin"
 CONFIGGEN_DIR="/usr/lib/python3.11/site-packages/configgen"
 
 Launcher_off="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/Wecad/ports/Launcher_off.sh"
 Launcher_on="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/Wecad/ports/Launcher_on.sh"
 Emulatorlauncher="https://raw.githubusercontent.com/RetroLuxxo/batocera-upgrade/refs/heads/main/scripts/Wecad/ports/emulatorlauncher.py"
+Custom="https://github.com/RetroLuxxo/batocera-upgrade/blob/main/scripts/Wecad/ports/custom.sh"
 
+wget -q "$Custom" -O "SISTEM_DIR/custom.sh"
 wget -q "$Launcher_off" -O "$BIN_DIR/Launcher_off.sh"
 wget -q "$Launcher_on" -O "$BIN_DIR/Launcher_on.sh"
 wget -q "$Emulatorlauncher" -O "$CONFIGGEN_DIR/emulatorlauncher.py"
