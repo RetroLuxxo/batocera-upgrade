@@ -122,8 +122,6 @@ wget -q "$Emulatorlauncher" -O "$CONFIGGEN_DIR/emulatorlauncher.py"
 
 batocera-save-overlay 250 &
 
-batocera-save-overlay 250 &
-
 
 
 
